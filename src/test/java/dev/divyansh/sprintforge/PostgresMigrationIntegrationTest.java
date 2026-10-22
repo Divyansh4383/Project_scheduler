@@ -51,9 +51,6 @@ class PostgresMigrationIntegrationTest {
         Integer refreshTokens = jdbc.queryForObject(
                 "select count(*) from information_schema.tables where table_name = 'refresh_tokens'",
                 Integer.class);
-        Integer attachments = jdbc.queryForObject(
-                "select count(*) from information_schema.tables where table_name = 'attachments'",
-                Integer.class);
         Integer comments = jdbc.queryForObject(
                 "select count(*) from information_schema.tables where table_name = 'work_item_comments'",
                 Integer.class);
@@ -61,9 +58,8 @@ class PostgresMigrationIntegrationTest {
                 "select count(*) from information_schema.tables where table_name = 'notification_outbox'",
                 Integer.class);
 
-        assertThat(migrations).isGreaterThanOrEqualTo(5);
+        assertThat(migrations).isGreaterThanOrEqualTo(6);
         assertThat(refreshTokens).isEqualTo(1);
-        assertThat(attachments).isEqualTo(1);
         assertThat(comments).isEqualTo(1);
         assertThat(outbox).isEqualTo(1);
     }
