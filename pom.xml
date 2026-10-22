@@ -8,7 +8,7 @@
 		<version>4.0.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>dev.sreedaya</groupId>
+	<groupId>dev.divyansh</groupId>
 	<artifactId>sprintforge</artifactId>
 	<version>1.0.0</version>
 	<name>SprintForge</name>

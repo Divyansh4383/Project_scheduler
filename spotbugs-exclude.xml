@@ -4,27 +4,27 @@
     <Match>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
         <Or>
-            <Class name="dev.sreedaya.sprintforge.attachment.Attachment"/>
-            <Class name="dev.sreedaya.sprintforge.audit.AuditEvent"/>
-            <Class name="dev.sreedaya.sprintforge.auth.RefreshToken"/>
-            <Class name="dev.sreedaya.sprintforge.comment.WorkItemComment"/>
-            <Class name="dev.sreedaya.sprintforge.project.Project"/>
-            <Class name="dev.sreedaya.sprintforge.sprint.Sprint"/>
-            <Class name="dev.sreedaya.sprintforge.task.WorkItem"/>
+            <Class name="dev.divyansh.sprintforge.attachment.Attachment"/>
+            <Class name="dev.divyansh.sprintforge.audit.AuditEvent"/>
+            <Class name="dev.divyansh.sprintforge.auth.RefreshToken"/>
+            <Class name="dev.divyansh.sprintforge.comment.WorkItemComment"/>
+            <Class name="dev.divyansh.sprintforge.project.Project"/>
+            <Class name="dev.divyansh.sprintforge.sprint.Sprint"/>
+            <Class name="dev.divyansh.sprintforge.task.WorkItem"/>
         </Or>
     </Match>
     <!-- Constructor-injected framework collaborators are intentionally retained. -->
     <Match>
         <Bug pattern="EI_EXPOSE_REP2"/>
         <Or>
-            <Class name="dev.sreedaya.sprintforge.auth.TokenService"/>
-            <Class name="dev.sreedaya.sprintforge.config.WebSocketConfig"/>
-            <Class name="dev.sreedaya.sprintforge.realtime.ProjectEventPublisher"/>
+            <Class name="dev.divyansh.sprintforge.auth.TokenService"/>
+            <Class name="dev.divyansh.sprintforge.config.WebSocketConfig"/>
+            <Class name="dev.divyansh.sprintforge.realtime.ProjectEventPublisher"/>
         </Or>
     </Match>
     <!-- The rotated token is an internal transaction result, never serialized directly. -->
     <Match>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
-        <Class name="dev.sreedaya.sprintforge.auth.TokenService$RotatedToken"/>
+        <Class name="dev.divyansh.sprintforge.auth.TokenService$RotatedToken"/>
     </Match>
 </FindBugsFilter>
