@@ -5,7 +5,7 @@ import dev.divyansh.sprintforge.audit.AuditEventRepository;
 import dev.divyansh.sprintforge.common.ApiExceptionHandler.NotFoundException;
 import dev.divyansh.sprintforge.project.Project;
 import dev.divyansh.sprintforge.project.ProjectAccessService;
-import dev.divyansh.sprintforge.realtime.ProjectEventPublisher;
+
 import dev.divyansh.sprintforge.task.WorkItem;
 import dev.divyansh.sprintforge.task.WorkItemRepository;
 import dev.divyansh.sprintforge.user.User;
@@ -40,19 +40,16 @@ public class WorkItemCommentController {
     private final WorkItemRepository workItems;
     private final AuditEventRepository auditEvents;
     private final ProjectAccessService access;
-    private final ProjectEventPublisher events;
 
     public WorkItemCommentController(
             WorkItemCommentRepository comments,
             WorkItemRepository workItems,
             AuditEventRepository auditEvents,
-            ProjectAccessService access,
-            ProjectEventPublisher events) {
+            ProjectAccessService access) {
         this.comments = comments;
         this.workItems = workItems;
         this.auditEvents = auditEvents;
         this.access = access;
-        this.events = events;
     }
 
     public record CommentRequest(@NotBlank @Size(max = 4000) String body) {}
@@ -102,7 +99,7 @@ public class WorkItemCommentController {
         comments.save(comment);
 
         recordAuditEvent(project, author, "COMMENT_CREATED", comment.getId());
-        events.publish(projectId, "COMMENT_CREATED", "COMMENT", comment.getId());
+
         return CommentView.from(comment);
     }
 
@@ -138,7 +135,7 @@ public class WorkItemCommentController {
         comment.setBody(request.body().trim());
         comment.setUpdatedAt(Instant.now());
         recordAuditEvent(project, actor, "COMMENT_UPDATED", comment.getId());
-        events.publish(projectId, "COMMENT_UPDATED", "COMMENT", comment.getId());
+
         return CommentView.from(comment);
     }
 
@@ -158,7 +155,7 @@ public class WorkItemCommentController {
         comment.setDeletedAt(Instant.now());
         comment.setUpdatedAt(Instant.now());
         recordAuditEvent(project, actor, "COMMENT_DELETED", comment.getId());
-        events.publish(projectId, "COMMENT_DELETED", "COMMENT", comment.getId());
+
     }
 
     private WorkItem requireWorkItem(UUID projectId, UUID workItemId) {

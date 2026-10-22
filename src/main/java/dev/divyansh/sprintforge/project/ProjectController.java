@@ -5,7 +5,7 @@ import dev.divyansh.sprintforge.audit.AuditEventRepository;
 import dev.divyansh.sprintforge.common.ApiExceptionHandler.ConflictException;
 import dev.divyansh.sprintforge.common.ApiExceptionHandler.NotFoundException;
 import dev.divyansh.sprintforge.notification.EmailNotificationService;
-import dev.divyansh.sprintforge.realtime.ProjectEventPublisher;
+
 import dev.divyansh.sprintforge.user.User;
 import dev.divyansh.sprintforge.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -40,21 +40,18 @@ public class ProjectController {
     private final AuditEventRepository auditEvents;
     private final ProjectAccessService access;
     private final EmailNotificationService notifications;
-    private final ProjectEventPublisher events;
 
     public ProjectController(
             ProjectRepository projects,
             UserRepository users,
             AuditEventRepository auditEvents,
             ProjectAccessService access,
-            EmailNotificationService notifications,
-            ProjectEventPublisher events) {
+            EmailNotificationService notifications) {
         this.projects = projects;
         this.users = users;
         this.auditEvents = auditEvents;
         this.access = access;
         this.notifications = notifications;
-        this.events = events;
     }
 
     public record CreateProject(
@@ -150,7 +147,7 @@ public class ProjectController {
         recordAuditEvent(project, actor, "MEMBER_ADDED", member.getId());
         notifications.projectInvitation(
                 member.getEmail(), project.getName(), project.getId(), member.getId());
-        events.publish(project.getId(), "MEMBER_ADDED", "USER", member.getId());
+
         log.info("Project member added: projectId={}, memberId={}", id, member.getId());
         return ProjectView.from(project);
     }
@@ -164,7 +161,7 @@ public class ProjectController {
         project.setStatus(Project.Status.ARCHIVED);
         project.setUpdatedAt(Instant.now());
         recordAuditEvent(project, actor, "PROJECT_ARCHIVED", project.getId());
-        events.publish(project.getId(), "PROJECT_ARCHIVED", "PROJECT", project.getId());
+
         log.info("Project archived: projectId={}, actorId={}", id, actor.getId());
         return ProjectView.from(project);
     }

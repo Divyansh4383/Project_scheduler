@@ -13,8 +13,7 @@ class SprintServiceTest {
             mock(SprintRepository.class),
             mock(dev.divyansh.sprintforge.project.ProjectAccessService.class),
             mock(dev.divyansh.sprintforge.audit.AuditEventRepository.class),
-            new SimpleMeterRegistry(),
-            mock(dev.divyansh.sprintforge.realtime.ProjectEventPublisher.class));
+            new SimpleMeterRegistry());
 
     @Test
     void allowsPlannedSprintToStart() {

@@ -7,7 +7,7 @@ import dev.divyansh.sprintforge.common.ApiExceptionHandler.BadRequestException;
 import dev.divyansh.sprintforge.common.ApiExceptionHandler.NotFoundException;
 import dev.divyansh.sprintforge.project.Project;
 import dev.divyansh.sprintforge.project.ProjectAccessService;
-import dev.divyansh.sprintforge.realtime.ProjectEventPublisher;
+
 import dev.divyansh.sprintforge.user.User;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -30,20 +30,17 @@ public class SprintService {
     private final AuditEventRepository auditEvents;
     private final Counter sprintCreated;
     private final Counter sprintStatusChanged;
-    private final ProjectEventPublisher events;
 
     public SprintService(
             SprintRepository sprints,
             ProjectAccessService access,
             AuditEventRepository auditEvents,
-            MeterRegistry meterRegistry,
-            ProjectEventPublisher events) {
+            MeterRegistry meterRegistry) {
         this.sprints = sprints;
         this.access = access;
         this.auditEvents = auditEvents;
         this.sprintCreated = meterRegistry.counter("sprintforge.sprints.created");
         this.sprintStatusChanged = meterRegistry.counter("sprintforge.sprints.status.changed");
-        this.events = events;
     }
 
     @Transactional
@@ -77,7 +74,7 @@ public class SprintService {
 
         User actor = access.currentUser(jwt);
         recordAuditEvent(project, actor, "SPRINT_CREATED", sprint.getId());
-        events.publish(projectId, "SPRINT_CREATED", "SPRINT", sprint.getId());
+
         sprintCreated.increment();
         log.info("Sprint created: sprintId={}, projectId={}", sprint.getId(), projectId);
         return sprint;
@@ -104,7 +101,7 @@ public class SprintService {
                 access.currentUser(jwt),
                 "SPRINT_STATUS_CHANGED",
                 sprint.getId());
-        events.publish(projectId, "SPRINT_STATUS_CHANGED", "SPRINT", sprint.getId());
+
         sprintStatusChanged.increment();
         log.info(
                 "Sprint status changed: sprintId={}, from={}, to={}",

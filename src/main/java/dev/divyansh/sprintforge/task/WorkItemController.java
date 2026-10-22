@@ -6,7 +6,7 @@ import dev.divyansh.sprintforge.common.ApiExceptionHandler.NotFoundException;
 import dev.divyansh.sprintforge.project.Project;
 import dev.divyansh.sprintforge.project.ProjectAccessService;
 import dev.divyansh.sprintforge.project.ProjectRepository;
-import dev.divyansh.sprintforge.realtime.ProjectEventPublisher;
+
 import dev.divyansh.sprintforge.sprint.Sprint;
 import dev.divyansh.sprintforge.sprint.SprintService;
 import dev.divyansh.sprintforge.user.User;
@@ -54,7 +54,6 @@ public class WorkItemController {
     private final WorkItemWorkflow workflow;
     private final WorkItemSummaryService summaries;
     private final ProjectAccessService access;
-    private final ProjectEventPublisher events;
 
     public WorkItemController(
             WorkItemRepository workItems,
@@ -64,8 +63,7 @@ public class WorkItemController {
             SprintService sprintService,
             WorkItemWorkflow workflow,
             WorkItemSummaryService summaries,
-            ProjectAccessService access,
-            ProjectEventPublisher events) {
+            ProjectAccessService access) {
         this.workItems = workItems;
         this.projects = projects;
         this.users = users;
@@ -74,7 +72,6 @@ public class WorkItemController {
         this.workflow = workflow;
         this.summaries = summaries;
         this.access = access;
-        this.events = events;
     }
 
     public record WorkItemRequest(
@@ -150,7 +147,7 @@ public class WorkItemController {
 
         workItems.save(workItem);
         recordAuditEvent(project, access.currentUser(jwt), "WORK_ITEM_CREATED", workItem.getId());
-        events.publish(projectId, "WORK_ITEM_CREATED", "WORK_ITEM", workItem.getId());
+
         log.info("Work item created: workItemId={}, projectId={}", workItem.getId(), projectId);
         return WorkItemView.from(workItem);
     }
@@ -188,7 +185,7 @@ public class WorkItemController {
         applyRequest(workItem, request, projectId);
         workItem.setUpdatedAt(Instant.now());
         recordAuditEvent(project, access.currentUser(jwt), "WORK_ITEM_UPDATED", workItem.getId());
-        events.publish(projectId, "WORK_ITEM_UPDATED", "WORK_ITEM", workItem.getId());
+
         if (previousStatus != workItem.getStatus()) {
             log.info(
                     "Work item status changed: workItemId={}, from={}, to={}",
@@ -212,7 +209,7 @@ public class WorkItemController {
         workItem.setDeletedAt(Instant.now());
         workItem.setUpdatedAt(Instant.now());
         recordAuditEvent(project, access.currentUser(jwt), "WORK_ITEM_DELETED", workItem.getId());
-        events.publish(projectId, "WORK_ITEM_DELETED", "WORK_ITEM", workItem.getId());
+
     }
 
     @GetMapping("/summary")
